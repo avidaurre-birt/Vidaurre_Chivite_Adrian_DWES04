@@ -3,7 +3,12 @@ require '../core/Router.php';
 //require '../app/controllers/CharlaController.php';
 require '../app/controllers/LimpiezaController.php';
 require '../app/controllers/PlantacionController.php';
-//require '../app/models/Codigos.php';
+
+// Habilitar CORS
+header("Access-Control-Allow-Origin: *"); // Permitir solicitudes desde cualquier origen
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
 
 $url = $_SERVER['QUERY_STRING'];
 

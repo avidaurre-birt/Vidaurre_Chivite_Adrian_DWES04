@@ -7,6 +7,7 @@ class PlantacionDTO implements JsonSerializable
     private $ubicacion;
     private $fecha_plantacion;
     private $participantes;
+    public $arboles;
 
 
     public function __construct($id_plantacion, $ubicacion, $fecha_plantacion, $participantes)
@@ -15,11 +16,20 @@ class PlantacionDTO implements JsonSerializable
         $this->ubicacion = $ubicacion;
         $this->fecha_plantacion = $fecha_plantacion;
         $this->participantes = $participantes;
+        $this->arboles = [];
     }
 
     public function jsonSerialize(): mixed
     {
-        return get_object_vars($this);
+        return array_merge(
+            get_object_vars($this),
+            ['arboles' => $this->arboles]
+        );
+    }
+
+    public function addArbol(ArbolDTO $arbol)
+    {
+        $this->arboles[] = $arbol;
     }
 
     /**

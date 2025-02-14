@@ -18,21 +18,55 @@ class PlantacionDAO
         $connection = $this->db->getConnection();
         $query = "SELECT * FROM plantaciones";
         $statement = $connection->query($query);
-        $result = $statement->fetchall(PDO::FETCH_ASSOC);
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        $plantacionesDTO = array();
+        $plantacionesDTO = [];
 
-        for ($i = 0; $i < count($result); $i++) {
-            $fila = $result[$i];
+        foreach ($result as $fila) {
+            // Crear un DTO para cada plantación
             $plantacionDTO = new PlantacionDTO(
                 $fila['id'],
                 $fila['ubicacion'],
                 $fila['fecha'],
                 $fila['participantes']
             );
+
+            // Obtener los árboles de esta plantación
+            $plantacionDTO->arboles = $this->obtenerArbolesPorPlantacion($fila['id']);
+
+            // Agregar la plantación al array final
             $plantacionesDTO[] = $plantacionDTO;
         }
+
         return $plantacionesDTO;
+    }
+
+    private function obtenerArbolesPorPlantacion($plantacionId)
+    {
+        $connection = $this->db->getConnection();
+
+        // Consulta para obtener los árboles de una plantación específica
+        $query = "SELECT * FROM arboles WHERE plantacion_id = :plantacion_id";
+        $statement = $connection->prepare($query);
+        $statement->bindValue(':plantacion_id', $plantacionId, PDO::PARAM_INT);
+        $statement->execute();
+
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $arboles = [];
+
+        foreach ($result as $fila) {
+            // Crear un DTO para cada árbol
+            $arbolDTO = new ArbolDTO(
+                $fila['id'],
+                $fila['especie'],
+                $fila['cantidad'],
+                $fila['plantacion_id']
+            );
+
+            $arboles[] = $arbolDTO;
+        }
+
+        return $arboles;
     }
 
     public function obtenerPlantacionId($id)
@@ -50,6 +84,9 @@ class PlantacionDAO
                 $result['fecha'],
                 $result['participantes']
             );
+            // Obtener los árboles de esta plantación
+            $plantacionDTO->arboles = $this->obtenerArbolesPorPlantacion($result['id']);
+
             return $plantacionDTO;
         } else {
             return false;

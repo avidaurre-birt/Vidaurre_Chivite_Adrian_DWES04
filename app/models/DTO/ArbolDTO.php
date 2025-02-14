@@ -1,6 +1,6 @@
 <?php
 
-class ArbolDTO
+class ArbolDTO implements JsonSerializable
 {
     private $id;
     private $especie;
@@ -13,6 +13,11 @@ class ArbolDTO
         $this->especie = $especie;
         $this->cantidad = $cantidad;
         $this->plantacionId = $plantacionId;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return get_object_vars($this);
     }
 
     public function getId()
